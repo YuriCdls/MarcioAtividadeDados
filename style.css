@@ -1,0 +1,39 @@
+body
+{
+  display: flex;
+  justify-content: center;
+}
+.container {
+  border: 1px solid #A9A2B9;
+  margin-top: 15px;
+  padding: 40px;
+  border-radius: 8px;
+}
+
+#player-value {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  text-align: center;
+}
+
+button {
+  padding: 5px;
+  border-radius: 5px;
+  font-weight: bold; 
+}
+
+#btnReset {
+  font-family: 'Montserrat', sans-serif;
+  background:#FFFFFF;
+}
+
+#btnPlayer1 {
+  font-family: 'Montserrat', sans-serif;
+  background:#FFFFFF;
+}
+
+#btnPlayer2 {
+  font-family: 'Montserrat', sans-serif;
+  background:#FFFFFF;
+}
