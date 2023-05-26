@@ -21,7 +21,6 @@ thResult.textContent = 'Resultado';
 const thRounds = document.createElement('th');
 thRounds.textContent = 'Rounds';
 
-//criando tabela
 trHead.appendChild(thRounds, thPlayer1);
 trHead.appendChild(thPlayer1);
 trHead.appendChild(thPlayer2);
@@ -30,24 +29,19 @@ tbody.appendChild(trHead);
 table.appendChild(tbody);
 document.querySelector('.container').appendChild(table);
 
-//definindo variáveis
 let movesPlayer1 = [];
 let movesPlayer2 = [];
 let nMoves = 0;
 let rounds = 0;
 let whoWon = [0,0]
 
-//setando botão inicial para desativado
 btnPlayer2.setAttribute('disabled', '');
 
-
-//função que roda dado
 function playDice(maxValue) {
     let dice = Math.floor(Math.random() * maxValue) + 1;
     return dice;
 }
 
-//função que diz quem ganhou o jogo
 function whoGameWon(whoWon) {
     if (whoWon[0] > whoWon[1]) {
         return 'Jogador 1';
@@ -60,7 +54,6 @@ function whoGameWon(whoWon) {
     }
 }
 
-//função que atualiza a tabela
 function updateTable(rounds, movesPlayer1, movesPlayer2) {
     const tr = document.createElement('tr');
     const thRound = document.createElement('th');
@@ -83,9 +76,14 @@ function updateTable(rounds, movesPlayer1, movesPlayer2) {
     tr.appendChild(tdPlayer2);
     tr.appendChild(tdResult);
     tbody.appendChild(tr);
+
+    // Salvar dados atualizados no LocalStorage
+    localStorage.setItem('movesPlayer1', JSON.stringify(movesPlayer1));
+    localStorage.setItem('movesPlayer2', JSON.stringify(movesPlayer2));
+    localStorage.setItem('rounds', rounds.toString());
+    localStorage.setItem('whoWon', JSON.stringify(whoWon));
 }
 
-//função que decide quem ganhou
 function whoRoundWin(movesPlayer1,movesPlayer2, rounds, whoWon) {
     console.log(movesPlayer1[rounds], " <-> ", movesPlayer2[rounds]);
 
@@ -102,7 +100,6 @@ function whoRoundWin(movesPlayer1,movesPlayer2, rounds, whoWon) {
     }
 }
 
-//função que diz quem joga
 function whoIsPlaying(nMoves) {
     let playing = (nMoves % 2);
     
@@ -117,7 +114,45 @@ function whoIsPlaying(nMoves) {
     }
 }
 
-//adicionando os eventos aos botões
+// Função que é executada ao abrir a página
+window.addEventListener('DOMContentLoaded', () => {
+    // Verificar se há dados salvos no LocalStorage
+    const savedMovesPlayer1 = localStorage.getItem('movesPlayer1');
+    const savedMovesPlayer2 = localStorage.getItem('movesPlayer2');
+    const savedNMoves = localStorage.getItem('nMoves');
+    const savedRounds = localStorage.getItem('rounds');
+    const savedWhoWon = localStorage.getItem('whoWon');
+    console.log('A aba carregou');
+  
+    console.log('savedMovesPlayer1:', savedMovesPlayer1);
+    console.log('savedMovesPlayer2:', savedMovesPlayer2);
+    console.log('savedNMoves:', savedNMoves);
+    console.log('savedRounds:', savedRounds);
+    console.log('savedWhoWon:', savedWhoWon);
+  
+    if (savedMovesPlayer1 !== null && savedMovesPlayer2 !== null && savedNMoves !== null && savedRounds !== null && savedWhoWon !== null) {
+      console.log('O if entrou!');
+      movesPlayer1 = JSON.parse(savedMovesPlayer1);
+      movesPlayer2 = JSON.parse(savedMovesPlayer2);
+      nMoves = parseInt(savedNMoves);
+      rounds = parseInt(savedRounds);
+      whoWon = JSON.parse(savedWhoWon);
+      updateTable(rounds, movesPlayer1, movesPlayer2);
+      p.textContent = `É a vez do ${whoIsPlaying(nMoves)}`;
+      console.log(movesPlayer1, movesPlayer2, rounds);
+    } else {
+      console.log('O if não entrou ou algum valor é nulo.');
+    }
+  });
+  
+  function updateGameState() {
+    localStorage.setItem('movesPlayer1', JSON.stringify(movesPlayer1));
+    localStorage.setItem('movesPlayer2', JSON.stringify(movesPlayer2));
+    localStorage.setItem('nMoves', (nMoves-1).toString());
+    localStorage.setItem('rounds', rounds.toString());
+    localStorage.setItem('whoWon', JSON.stringify(whoWon));
+  }
+
 
 btnPlayer1.addEventListener('click', () => {
     let result = playDice(6);
@@ -127,6 +162,7 @@ btnPlayer1.addEventListener('click', () => {
     lb.textContent = result;
     p.textContent = play;
     movesPlayer1.push(result);
+    updateGameState()
 });
 
 btnPlayer2.addEventListener('click', () => {
@@ -143,7 +179,8 @@ btnPlayer2.addEventListener('click', () => {
     }else{
         roundWin.textContent = `O jogador ${whoRoundWin(movesPlayer1, movesPlayer2, rounds-1, whoWon)} ganhou o ${rounds}º round!`;
     }
-    console.log("Resultado: jogador 1:", movesPlayer1, " jogador 2:", movesPlayer2)
+    console.log("Resultado: jogador 1:", movesPlayer1, " jogador 2:", movesPlayer2);
+    updateGameState();
     updateTable(rounds, movesPlayer1, movesPlayer2);
     if(rounds === 10){
         btnReset.textContent = 'Jogar novamente?'
@@ -154,5 +191,6 @@ btnPlayer2.addEventListener('click', () => {
 });
 
 btnReset.addEventListener('click', () => {
+    localStorage.clear();
     location.reload(true);
 })
