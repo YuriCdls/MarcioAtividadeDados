@@ -31,7 +31,7 @@ document.querySelector('.container').appendChild(table);
 
 let movesPlayer1 = [];
 let movesPlayer2 = [];
-let nMoves = 0;
+let nMoves = 0; //asdasda
 let rounds = 0;
 let whoWon = [0,0]
 
